@@ -22,6 +22,6 @@ build:
 	poetry build
 
 publish:
-	poetry publish
+	poetry publish 
 
 .PHONY: all proto-gen format init build publish
