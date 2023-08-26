@@ -1,0 +1,4 @@
+[submodule "glitter-chain"]
+	path = glitter-chain
+	url = git@github.com:blockved/glitter-chain.git
+	branch = dev_v3_20230318

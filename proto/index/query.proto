@@ -1,0 +1,219 @@
+syntax = "proto3";
+package blockved.glitterchain.index;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "index/params.proto";
+import "index/index.proto";
+import "index/sql_engine.proto";
+// this line is used by starport scaffolding # 1
+
+option go_package = "github.com/blockved/glitter-chain/x/index/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc ListSchema(ListSchemaRequest) returns (ListSchemaResponse) {
+    option (google.api.http).get = "/blockved/glitterchain/index/list_schema";
+  }
+
+  // Parameters queries the parameters of the module.
+  rpc GetSchema(GetSchemaRequest) returns (GetSchemaResponse) {
+    option (google.api.http).get = "/blockved/glitterchain/index/get_schema/{schemaName}";
+  }
+
+  // Parameters queries the parameters of the module.
+  rpc GetDoc(GetDocRequest) returns (GetDocResponse) {
+    option (google.api.http).get = "/blockved/glitterchain/index/schema/{schemaName}/get_doc/{docID}";
+  }
+
+  // Parameters queries the parameters of the module.
+  rpc SearchDoc(SearchDocRequest) returns (SearchDocResponse) {
+    option (google.api.http) = {
+      post: "/blockved/glitterchain/index/search",
+      body: "*"
+    };
+  }
+
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/blockved/glitterchain/index/params";
+  }
+
+  // SQLQuery do queries
+  rpc SQLQuery(SQLQueryRequest) returns (SQLQueryResponse) {
+    option (google.api.http) = {
+      post: "/blockved/glitterchain/index/sql/query",
+      body: "*"
+    };
+  }
+
+  // SimpleSQLQuery do queries
+  rpc SimpleSQLQuery(SQLQueryRequest) returns (SimpleSQLQueryResponse) {
+    option (google.api.http) = {
+      post: "/blockved/glitterchain/index/sql/simple_query",
+      body: "*"
+    };
+  }
+
+  // Parameters queries the parameters of the module.
+  rpc SQLListTables(SQLListTablesRequest) returns (SQLListTablesResponse) {
+    option (google.api.http).get = "/blockved/glitterchain/index/sql/list_tables";
+  }
+
+  rpc SQLListDatabases(SQLListDatabasesRequest) returns (SQLListDatabasesResponse) {
+    option (google.api.http).get = "/blockved/glitterchain/index/sql/list_databases";
+  }
+
+  rpc ShowCreateTable(ShowCreateTableRequest) returns (ShowCreateTableResponse) {
+    option (google.api.http).get = "/blockved/glitterchain/index/sql/show_create_table";
+  }
+  // this line is used by starport scaffolding # 2
+}
+
+// ListSchemaRequest is request type for the Query RPC method.
+message ListSchemaRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// ListSchemaResponse is response type for the Query RPC method.
+message ListSchemaResponse {
+  repeated Schema schemas = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// GetSchemaRequest is request type for the Query RPC method.
+message GetSchemaRequest {
+  string schemaName = 1;
+}
+
+// GetSchemaResponse is response type for the Query RPC method.
+message GetSchemaResponse {
+  Schema schema = 1 [(gogoproto.nullable) = false];
+}
+
+// GetDocsRequest is request type for the Query RPC method.
+message GetDocRequest {
+  string schemaName = 1;
+  string docID = 2;
+}
+
+// GetDocsResponse is response type for the Query RPC method.
+message GetDocResponse {
+  Doc doc = 1 [(gogoproto.nullable) = false];
+}
+
+// GetDocsRequest is request type for the Query RPC method.
+message SearchDocRequest {
+  string schemaName = 1;
+  string query = 2;
+  repeated string queryField = 3;
+  repeated string aggsField = 4;
+  SearchFilters filter = 5;
+  string orderBy = 6;
+  int64 limit = 7;
+  int64 page = 8;
+  FieldValueFactor factor = 9;
+}
+
+// GetDocsResponse is response type for the Query RPC method.
+message SearchDocResponse {
+  int64 searchTime = 1;
+  string schemaName = 2;
+  Meta meta = 3;
+  repeated DocItem items = 4;
+  map<string, SearchFilters> facet = 5;
+}
+
+message Meta {
+  int64 currentPage = 1;
+  int64 totalPages = 2;
+  int64 totalResults = 3;
+  int64 size = 4;
+  string sortedBy = 5;
+}
+
+message DocItem {
+  map<string, strings> Highlight = 1;
+  string data = 2;
+  double score = 3;
+}
+
+message strings {
+  repeated string strings = 1;
+}
+
+message SearchFilters {
+  repeated SearchFilter search_filter = 1;
+}
+message SearchFilter {
+  string type = 1;
+  string field = 2;
+  string value = 3;
+  float from = 4;
+  float to = 5;
+  int64 doc_count = 6;
+}
+message FieldValueFactor {
+  string field = 1;
+  double factor = 2;
+  double missing = 3;
+  double weight = 4;
+  string modifier = 5;
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message SQLQueryRequest{
+  string sql = 1;
+  repeated Argument arguments = 2;
+}
+
+message SQLQueryResponse{
+  repeated ResultSet results = 1;
+  float took_times = 2;
+}
+message SimpleSQLQueryResponse{
+  message ResultSet{
+    map<string, RowValue> row = 1;
+  }
+  message RowValue{
+    string value = 1;
+    ColumnValueType column_value_type = 2;
+  }
+  repeated ResultSet result = 1;
+}
+
+message SQLListTablesRequest{
+  string keyword = 1;
+  string uid = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+  string database = 5;
+}
+
+message SQLListTablesResponse{
+  repeated TableInfo tables = 1;
+}
+
+message SQLListDatabasesRequest{
+}
+
+message SQLListDatabasesResponse{
+  repeated DatabaseInfo databases = 1;
+}
+
+message ShowCreateTableRequest{
+  string database_name = 1;
+  string table_name = 2;
+}
+message ShowCreateTableResponse{
+  string schema = 1;
+}

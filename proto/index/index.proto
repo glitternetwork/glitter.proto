@@ -1,0 +1,21 @@
+syntax = "proto3";
+package blockved.glitterchain.index;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/blockved/glitter-chain/x/index/types";
+import "gogoproto/gogo.proto";
+
+
+message Schema {
+  string owner_address   = 1 [(gogoproto.moretags) = "yaml:\"owner_address\""];
+  string schema_name     = 2 [(gogoproto.moretags) = "yaml:\"schema_name\""];
+  string body            = 3 [(gogoproto.moretags) = "yaml:\"body\""];
+}
+
+
+message Doc {
+  string owner_address   = 1 [(gogoproto.moretags) = "yaml:\"owner_address\""];
+  string schema_name     = 2 [(gogoproto.moretags) = "yaml:\"schema_name\""];
+  string body            = 3 [(gogoproto.moretags) = "yaml:\"body\""];
+}
