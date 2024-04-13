@@ -160,6 +160,49 @@ class SqlGrantResponse(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class SqlAnalyzerRequest(betterproto.Message):
+    uid: str = betterproto.string_field(1)
+    op_type: str = betterproto.string_field(2)
+    is_delete: bool = betterproto.bool_field(3)
+    token_filter: "TokenFilter" = betterproto.message_field(4)
+    tokenizer: "Tokenizer" = betterproto.message_field(5)
+    analyzer: "Analyzer" = betterproto.message_field(6)
+
+
+@dataclass(eq=False, repr=False)
+class TokenFilter(betterproto.Message):
+    token_filter_name: str = betterproto.string_field(1)
+    token_filter_en_name: str = betterproto.string_field(2)
+    token_filter_type: int = betterproto.int64_field(3)
+    dict_file_cid: str = betterproto.string_field(4)
+    comment: str = betterproto.string_field(5)
+
+
+@dataclass(eq=False, repr=False)
+class Tokenizer(betterproto.Message):
+    tokenizer_name: str = betterproto.string_field(1)
+    tokenizer_en_name: str = betterproto.string_field(2)
+    tokenizer_type: int = betterproto.int64_field(3)
+    dict_file_cid: str = betterproto.string_field(4)
+    comment: str = betterproto.string_field(5)
+
+
+@dataclass(eq=False, repr=False)
+class Analyzer(betterproto.Message):
+    analyzer_name: str = betterproto.string_field(1)
+    analyzer_en_name: str = betterproto.string_field(2)
+    char_filters: str = betterproto.string_field(3)
+    tokenizer: str = betterproto.string_field(4)
+    token_filters: str = betterproto.string_field(5)
+    comment: str = betterproto.string_field(6)
+
+
+@dataclass(eq=False, repr=False)
+class SqlAnalyzerResponse(betterproto.Message):
+    pass
+
+
+@dataclass(eq=False, repr=False)
 class Params(betterproto.Message):
     """Params defines the parameters for the module."""
 
@@ -461,6 +504,23 @@ class MsgStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def sql_analyzer(
+        self,
+        sql_analyzer_request: "SqlAnalyzerRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "SqlAnalyzerResponse":
+        return await self._unary_unary(
+            "/blockved.glitterchain.index.Msg/SQLAnalyzer",
+            sql_analyzer_request,
+            SqlAnalyzerResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class QueryStub(betterproto.ServiceStub):
     async def list_schema(
@@ -649,6 +709,11 @@ class MsgBase(ServiceBase):
     ) -> "SqlGrantResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def sql_analyzer(
+        self, sql_analyzer_request: "SqlAnalyzerRequest"
+    ) -> "SqlAnalyzerResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_manage_schema(
         self, stream: "grpclib.server.Stream[MsgSchema, MsgSchemaResponse]"
     ) -> None:
@@ -677,6 +742,13 @@ class MsgBase(ServiceBase):
         response = await self.sql_grant(request)
         await stream.send_message(response)
 
+    async def __rpc_sql_analyzer(
+        self, stream: "grpclib.server.Stream[SqlAnalyzerRequest, SqlAnalyzerResponse]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.sql_analyzer(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/blockved.glitterchain.index.Msg/ManageSchema": grpclib.const.Handler(
@@ -702,6 +774,12 @@ class MsgBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 SqlGrantRequest,
                 SqlGrantResponse,
+            ),
+            "/blockved.glitterchain.index.Msg/SQLAnalyzer": grpclib.const.Handler(
+                self.__rpc_sql_analyzer,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                SqlAnalyzerRequest,
+                SqlAnalyzerResponse,
             ),
         }
 

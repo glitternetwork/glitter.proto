@@ -15,6 +15,8 @@ service Msg {
     rpc SQLExec(SQLExecRequest) returns (SQLExecResponse);
 
     rpc SQLGrant(SQLGrantRequest) returns (SQLGrantResponse);
+
+    rpc SQLAnalyzer(SQLAnalyzerRequest) returns (SQLAnalyzerResponse);
 }
 
 
@@ -59,4 +61,41 @@ message SQLGrantRequest{
 }
 
 message SQLGrantResponse{
+}
+
+message SQLAnalyzerRequest{
+  string uid = 1;
+  string opType = 2;
+  bool isDelete = 3;
+  TokenFilter tokenFilter = 4;
+  Tokenizer tokenizer = 5;
+  Analyzer analyzer = 6;
+}
+
+message TokenFilter{
+  string tokenFilterName = 1;
+  string tokenFilterEnName = 2;
+  int64 tokenFilterType = 3;
+  string dictFileCid = 4;
+  string comment = 5;
+}
+
+message Tokenizer{
+  string tokenizerName = 1;
+  string tokenizerEnName = 2;
+  int64 tokenizerType = 3;
+  string dictFileCid = 4;
+  string comment = 5;
+}
+
+message Analyzer{
+  string analyzerName = 1;
+  string analyzerEnName = 2;
+  string charFilters = 3;
+  string tokenizer = 4;
+  string tokenFilters = 5;
+  string comment = 6;
+}
+
+message SQLAnalyzerResponse{
 }

@@ -9,8 +9,8 @@ init:
 	@echo "Pull External Protofiles"
 	git submodule init
 	git submodule update --remote
-	rm -rf ../proto/index
-	cp -R ../glitter-chain/proto/index ../proto
+#	rm -rf ../proto/index
+#	cp -R ../proto/index ../proto
 
 proto-gen:
 	@echo "Generating Protobuf files"
