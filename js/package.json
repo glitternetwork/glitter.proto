@@ -1,6 +1,6 @@
 {
   "name": "@glitterprotocol/glitter.proto",
-  "version": "1.0.3-beta.1",
+  "version": "1.0.8-beta.1",
   "description": "JS and TS types relating to Protocol Buffers used by Glitter project",
   "contributors": [
     "Rrbin"
