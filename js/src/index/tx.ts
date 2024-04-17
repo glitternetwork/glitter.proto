@@ -56,7 +56,7 @@ export interface SQLAnalyzerRequest {
 export interface TokenFilter {
   tokenFilterName: string;
   tokenFilterEnName: string;
-  tokenFilterType: Long;
+  tokenFilterType: number;
   dictFileCid: string;
   comment: string;
 }
@@ -64,7 +64,7 @@ export interface TokenFilter {
 export interface Tokenizer {
   tokenizerName: string;
   tokenizerEnName: string;
-  tokenizerType: Long;
+  tokenizerType: number;
   dictFileCid: string;
   comment: string;
 }
@@ -816,7 +816,7 @@ export const SQLAnalyzerRequest = {
 const baseTokenFilter: object = {
   tokenFilterName: "",
   tokenFilterEnName: "",
-  tokenFilterType: Long.ZERO,
+  tokenFilterType: 0,
   dictFileCid: "",
   comment: "",
 };
@@ -829,8 +829,8 @@ export const TokenFilter = {
     if (message.tokenFilterEnName !== "") {
       writer.uint32(18).string(message.tokenFilterEnName);
     }
-    if (!message.tokenFilterType.isZero()) {
-      writer.uint32(24).int64(message.tokenFilterType);
+    if (message.tokenFilterType !== 0) {
+      writer.uint32(24).int32(message.tokenFilterType);
     }
     if (message.dictFileCid !== "") {
       writer.uint32(34).string(message.dictFileCid);
@@ -855,7 +855,7 @@ export const TokenFilter = {
           message.tokenFilterEnName = reader.string();
           break;
         case 3:
-          message.tokenFilterType = reader.int64() as Long;
+          message.tokenFilterType = reader.int32();
           break;
         case 4:
           message.dictFileCid = reader.string();
@@ -884,9 +884,9 @@ export const TokenFilter = {
       message.tokenFilterEnName = "";
     }
     if (object.tokenFilterType !== undefined && object.tokenFilterType !== null) {
-      message.tokenFilterType = Long.fromString(object.tokenFilterType);
+      message.tokenFilterType = Number(object.tokenFilterType);
     } else {
-      message.tokenFilterType = Long.ZERO;
+      message.tokenFilterType = 0;
     }
     if (object.dictFileCid !== undefined && object.dictFileCid !== null) {
       message.dictFileCid = String(object.dictFileCid);
@@ -905,8 +905,7 @@ export const TokenFilter = {
     const obj: any = {};
     message.tokenFilterName !== undefined && (obj.tokenFilterName = message.tokenFilterName);
     message.tokenFilterEnName !== undefined && (obj.tokenFilterEnName = message.tokenFilterEnName);
-    message.tokenFilterType !== undefined &&
-      (obj.tokenFilterType = (message.tokenFilterType || Long.ZERO).toString());
+    message.tokenFilterType !== undefined && (obj.tokenFilterType = message.tokenFilterType);
     message.dictFileCid !== undefined && (obj.dictFileCid = message.dictFileCid);
     message.comment !== undefined && (obj.comment = message.comment);
     return obj;
@@ -925,9 +924,9 @@ export const TokenFilter = {
       message.tokenFilterEnName = "";
     }
     if (object.tokenFilterType !== undefined && object.tokenFilterType !== null) {
-      message.tokenFilterType = object.tokenFilterType as Long;
+      message.tokenFilterType = object.tokenFilterType;
     } else {
-      message.tokenFilterType = Long.ZERO;
+      message.tokenFilterType = 0;
     }
     if (object.dictFileCid !== undefined && object.dictFileCid !== null) {
       message.dictFileCid = object.dictFileCid;
@@ -946,7 +945,7 @@ export const TokenFilter = {
 const baseTokenizer: object = {
   tokenizerName: "",
   tokenizerEnName: "",
-  tokenizerType: Long.ZERO,
+  tokenizerType: 0,
   dictFileCid: "",
   comment: "",
 };
@@ -959,8 +958,8 @@ export const Tokenizer = {
     if (message.tokenizerEnName !== "") {
       writer.uint32(18).string(message.tokenizerEnName);
     }
-    if (!message.tokenizerType.isZero()) {
-      writer.uint32(24).int64(message.tokenizerType);
+    if (message.tokenizerType !== 0) {
+      writer.uint32(24).int32(message.tokenizerType);
     }
     if (message.dictFileCid !== "") {
       writer.uint32(34).string(message.dictFileCid);
@@ -985,7 +984,7 @@ export const Tokenizer = {
           message.tokenizerEnName = reader.string();
           break;
         case 3:
-          message.tokenizerType = reader.int64() as Long;
+          message.tokenizerType = reader.int32();
           break;
         case 4:
           message.dictFileCid = reader.string();
@@ -1014,9 +1013,9 @@ export const Tokenizer = {
       message.tokenizerEnName = "";
     }
     if (object.tokenizerType !== undefined && object.tokenizerType !== null) {
-      message.tokenizerType = Long.fromString(object.tokenizerType);
+      message.tokenizerType = Number(object.tokenizerType);
     } else {
-      message.tokenizerType = Long.ZERO;
+      message.tokenizerType = 0;
     }
     if (object.dictFileCid !== undefined && object.dictFileCid !== null) {
       message.dictFileCid = String(object.dictFileCid);
@@ -1035,8 +1034,7 @@ export const Tokenizer = {
     const obj: any = {};
     message.tokenizerName !== undefined && (obj.tokenizerName = message.tokenizerName);
     message.tokenizerEnName !== undefined && (obj.tokenizerEnName = message.tokenizerEnName);
-    message.tokenizerType !== undefined &&
-      (obj.tokenizerType = (message.tokenizerType || Long.ZERO).toString());
+    message.tokenizerType !== undefined && (obj.tokenizerType = message.tokenizerType);
     message.dictFileCid !== undefined && (obj.dictFileCid = message.dictFileCid);
     message.comment !== undefined && (obj.comment = message.comment);
     return obj;
@@ -1055,9 +1053,9 @@ export const Tokenizer = {
       message.tokenizerEnName = "";
     }
     if (object.tokenizerType !== undefined && object.tokenizerType !== null) {
-      message.tokenizerType = object.tokenizerType as Long;
+      message.tokenizerType = object.tokenizerType;
     } else {
-      message.tokenizerType = Long.ZERO;
+      message.tokenizerType = 0;
     }
     if (object.dictFileCid !== undefined && object.dictFileCid !== null) {
       message.dictFileCid = object.dictFileCid;

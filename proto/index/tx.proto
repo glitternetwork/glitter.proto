@@ -75,7 +75,7 @@ message SQLAnalyzerRequest{
 message TokenFilter{
   string tokenFilterName = 1;
   string tokenFilterEnName = 2;
-  int64 tokenFilterType = 3;
+  int32 tokenFilterType = 3;
   string dictFileCid = 4;
   string comment = 5;
 }
@@ -83,7 +83,7 @@ message TokenFilter{
 message Tokenizer{
   string tokenizerName = 1;
   string tokenizerEnName = 2;
-  int64 tokenizerType = 3;
+  int32 tokenizerType = 3;
   string dictFileCid = 4;
   string comment = 5;
 }
