@@ -7,6 +7,44 @@ import { Argument, ResultSet } from "../index/sql_engine";
 
 export const protobufPackage = "blockved.glitterchain.index";
 
+export enum OpType {
+  Create = 0,
+  Update = 1,
+  Delete = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function opTypeFromJSON(object: any): OpType {
+  switch (object) {
+    case 0:
+    case "Create":
+      return OpType.Create;
+    case 1:
+    case "Update":
+      return OpType.Update;
+    case 2:
+    case "Delete":
+      return OpType.Delete;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return OpType.UNRECOGNIZED;
+  }
+}
+
+export function opTypeToJSON(object: OpType): string {
+  switch (object) {
+    case OpType.Create:
+      return "Create";
+    case OpType.Update:
+      return "Update";
+    case OpType.Delete:
+      return "Delete";
+    default:
+      return "UNKNOWN";
+  }
+}
+
 export interface MsgSchema {
   ownerAddress: string;
   schemaName: string;
@@ -46,8 +84,8 @@ export interface SQLGrantResponse {}
 
 export interface SQLAnalyzerRequest {
   uid: string;
-  opType: string;
-  isDelete: boolean;
+  analysisType: string;
+  opType: OpType;
   tokenFilter?: TokenFilter;
   tokenizer?: Tokenizer;
   analyzer?: Analyzer;
@@ -670,18 +708,18 @@ export const SQLGrantResponse = {
   },
 };
 
-const baseSQLAnalyzerRequest: object = { uid: "", opType: "", isDelete: false };
+const baseSQLAnalyzerRequest: object = { uid: "", analysisType: "", opType: 0 };
 
 export const SQLAnalyzerRequest = {
   encode(message: SQLAnalyzerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.uid !== "") {
       writer.uint32(10).string(message.uid);
     }
-    if (message.opType !== "") {
-      writer.uint32(18).string(message.opType);
+    if (message.analysisType !== "") {
+      writer.uint32(18).string(message.analysisType);
     }
-    if (message.isDelete === true) {
-      writer.uint32(24).bool(message.isDelete);
+    if (message.opType !== 0) {
+      writer.uint32(24).int32(message.opType);
     }
     if (message.tokenFilter !== undefined) {
       TokenFilter.encode(message.tokenFilter, writer.uint32(34).fork()).ldelim();
@@ -706,10 +744,10 @@ export const SQLAnalyzerRequest = {
           message.uid = reader.string();
           break;
         case 2:
-          message.opType = reader.string();
+          message.analysisType = reader.string();
           break;
         case 3:
-          message.isDelete = reader.bool();
+          message.opType = reader.int32() as any;
           break;
         case 4:
           message.tokenFilter = TokenFilter.decode(reader, reader.uint32());
@@ -735,15 +773,15 @@ export const SQLAnalyzerRequest = {
     } else {
       message.uid = "";
     }
-    if (object.opType !== undefined && object.opType !== null) {
-      message.opType = String(object.opType);
+    if (object.analysisType !== undefined && object.analysisType !== null) {
+      message.analysisType = String(object.analysisType);
     } else {
-      message.opType = "";
+      message.analysisType = "";
     }
-    if (object.isDelete !== undefined && object.isDelete !== null) {
-      message.isDelete = Boolean(object.isDelete);
+    if (object.opType !== undefined && object.opType !== null) {
+      message.opType = opTypeFromJSON(object.opType);
     } else {
-      message.isDelete = false;
+      message.opType = 0;
     }
     if (object.tokenFilter !== undefined && object.tokenFilter !== null) {
       message.tokenFilter = TokenFilter.fromJSON(object.tokenFilter);
@@ -766,8 +804,8 @@ export const SQLAnalyzerRequest = {
   toJSON(message: SQLAnalyzerRequest): unknown {
     const obj: any = {};
     message.uid !== undefined && (obj.uid = message.uid);
-    message.opType !== undefined && (obj.opType = message.opType);
-    message.isDelete !== undefined && (obj.isDelete = message.isDelete);
+    message.analysisType !== undefined && (obj.analysisType = message.analysisType);
+    message.opType !== undefined && (obj.opType = opTypeToJSON(message.opType));
     message.tokenFilter !== undefined &&
       (obj.tokenFilter = message.tokenFilter ? TokenFilter.toJSON(message.tokenFilter) : undefined);
     message.tokenizer !== undefined &&
@@ -784,15 +822,15 @@ export const SQLAnalyzerRequest = {
     } else {
       message.uid = "";
     }
+    if (object.analysisType !== undefined && object.analysisType !== null) {
+      message.analysisType = object.analysisType;
+    } else {
+      message.analysisType = "";
+    }
     if (object.opType !== undefined && object.opType !== null) {
       message.opType = object.opType;
     } else {
-      message.opType = "";
-    }
-    if (object.isDelete !== undefined && object.isDelete !== null) {
-      message.isDelete = object.isDelete;
-    } else {
-      message.isDelete = false;
+      message.opType = 0;
     }
     if (object.tokenFilter !== undefined && object.tokenFilter !== null) {
       message.tokenFilter = TokenFilter.fromPartial(object.tokenFilter);

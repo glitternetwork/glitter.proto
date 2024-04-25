@@ -63,10 +63,16 @@ message SQLGrantRequest{
 message SQLGrantResponse{
 }
 
+enum OpType {
+  Create = 0;
+  Update = 1;
+  Delete = 2;
+}
+
 message SQLAnalyzerRequest{
   string uid = 1;
-  string opType = 2;
-  bool isDelete = 3;
+  string analysisType = 2;
+  OpType opType = 3;
   TokenFilter tokenFilter = 4;
   Tokenizer tokenizer = 5;
   Analyzer analyzer = 6;
